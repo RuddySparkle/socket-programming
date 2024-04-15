@@ -6,6 +6,7 @@ import { useOktaAuth, Security } from '@okta/okta-react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useAuth } from './auth';
 import './App.css';
+import OktaAuth from '@okta/okta-auth-js';
 
 const ChatApp = () => {
   const [socket, setSocket] = useState(null);
@@ -56,15 +57,16 @@ const ChatApp = () => {
 };
 
 function App() {
-  const oktaConfig = {
+  const oktaConfig = new OktaAuth({
     issuer: `${process.env.REACT_APP_OKTA_ORG_URL}/oauth2/default`,
     clientId: process.env.REACT_APP_OKTA_CLIENT_ID,
     redirectUri: window.location.origin + '/login/callback',
-  };
+  });
+  console.log('Okta Config:', oktaConfig);
 
   return (
     <Router>
-      <Security {...oktaConfig}>
+      <Security oktaAuth={oktaConfig} restoreOriginalUri={true}>
         <ChatApp />
       </Security>
     </Router>
