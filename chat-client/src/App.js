@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import Messages from './Messages';
 import MessageInput from './MessageInput';
-import { useOktaAuth } from '@okta/okta-react';
+import { useOktaAuth, Security } from '@okta/okta-react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { useAuth } from './auth';
 import './App.css';
 
-function App() {
+const ChatApp = () => {
   const [socket, setSocket] = useState(null);
   const { oktaAuth, authState } = useOktaAuth();
+  const [user, token] = useAuth();
 
   const login = async () => oktaAuth.signInWithRedirect('/');
   const logout = async () => oktaAuth.signOut('/');
-
-  const [user, token] = useAuth();
 
   useEffect(() => {
     const newSocket = io(
@@ -22,7 +22,9 @@ function App() {
     );
     setSocket(newSocket);
     return () => newSocket.close();
-  }, [setSocket, token]);
+  }, [token]);
+
+  console.log(oktaAuth, authState);
 
   return (
     <div className="App">
@@ -50,6 +52,22 @@ function App() {
         <div>Not Connected</div>
       )}
     </div>
+  );
+};
+
+function App() {
+  const oktaConfig = {
+    issuer: `${process.env.REACT_APP_OKTA_ORG_URL}/oauth2/default`,
+    clientId: process.env.REACT_APP_OKTA_CLIENT_ID,
+    redirectUri: window.location.origin + '/login/callback',
+  };
+
+  return (
+    <Router>
+      <Security {...oktaConfig}>
+        <ChatApp />
+      </Security>
+    </Router>
   );
 }
 
