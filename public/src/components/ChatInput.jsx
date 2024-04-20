@@ -26,6 +26,7 @@ export default function ChatInput({ handleSendMsg, username }) {
         }
     };
 
+<<<<<<< Updated upstream
     return (
         <Container>
             <div className="button-container">
@@ -51,6 +52,44 @@ export default function ChatInput({ handleSendMsg, username }) {
 
 const Container = styled.div`
     display: grid;
+=======
+  return (
+    <Container>
+      <div className="button-container">
+        <div className="emoji">
+          <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
+          {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+        </div>
+      </div>
+      <form className="input-container" onSubmit={(event) => sendChat(event)}>
+        <input
+          type="text"
+          placeholder="type your message here"
+          onChange={(e) => setMsg(e.target.value)}
+          value={msg}
+        />
+        <button type="submit">
+          <IoMdSend />
+          <h2>Send</h2>
+        </button>
+      </form>
+    </Container>
+  );
+}
+
+const Container = styled.div`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 5% 95%;
+  background-color: #272019;
+  padding: 0 2rem;
+  @media screen and (min-width: 720px) and (max-width: 1080px) {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+  .button-container {
+    display: flex;
+>>>>>>> Stashed changes
     align-items: center;
     grid-template-columns: 5% 95%;
     background-color: #080420;
@@ -99,6 +138,7 @@ const Container = styled.div`
             }
         }
     }
+<<<<<<< Updated upstream
     .input-container {
         width: 100%;
         border-radius: 2rem;
@@ -141,5 +181,56 @@ const Container = styled.div`
                 color: white;
             }
         }
+=======
+  }
+  .input-container {
+    width: 100%;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background-color: #ffffff40;
+    input {
+      width: 90%;
+      height: 60%;
+      background-color: transparent;
+      color: white;
+      border: none;
+      padding-left: 1rem;
+      font-size: 1.2rem;
+
+      &::selection {
+        background-color: #9a86f3;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+    button {
+      padding: 0.3rem 1rem;
+      border-radius: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fca300;
+      border: none;
+      transition: 0.2s;
+      gap: 0.4rem;
+      color: white;
+      @media screen and (min-width: 720px) and (max-width: 1080px) {
+        padding: 0.3rem 1rem;
+        svg {
+          font-size: 1rem;
+        }
+      }
+      &:hover {
+        cursor: pointer;
+        background-color: #ffc968;
+      }
+      svg {
+        font-size: 2rem;
+        color: white;
+      }
+>>>>>>> Stashed changes
     }
 `;

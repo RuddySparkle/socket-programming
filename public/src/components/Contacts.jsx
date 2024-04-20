@@ -123,6 +123,7 @@ export default function Contacts({ contacts, changeChat, socket }) {
         }
     }
 
+<<<<<<< Updated upstream
     return (
         <>
             {currentUserImage && currentUserImage && (
@@ -202,6 +203,128 @@ const Container = styled.div`
         align-items: center;
         gap: 1rem;
         justify-content: center;
+=======
+  return (
+    <>
+      {currentUserImage && currentUserImage && (
+        <Container>
+          <div className="brand">
+            <h3>เตเต้ทำงานแล้ว!</h3>
+          </div>
+          <div className="contacts">
+            {contacts.map((contact, index) => {
+              return (
+                <div
+                  key={contact._id}
+                  className={`contact ${
+                    index === currentSelected ? "selected" : ""
+                  }`}
+                  onClick={() => changeCurrentChat(index, contact)}
+                >
+                  <div className="avatar">
+                    {
+                      // if contact.avatarImage is undefined, use defaultAvatar
+                      contact.avatarImage === undefined ? (
+                        <img
+                          src={`${defaultAvatar}`}
+                          className="defaultAvatar"
+                          alt=""
+                        />
+                      ) : (
+                        <img src={`${contact.avatarImage}`} alt="" />
+                      )
+                    }
+                  </div>
+                  <div className="username">
+                    <h3>{contact.nickname}</h3>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="current-user">
+            <div className="avatar">
+              <img src={`${currentUserImage}`} alt="avatar" />
+            </div>
+            <div className="username">
+              <h2>{currentNickname}</h2>
+            </div>
+            <IconContext.Provider
+              value={{
+                color: "white",
+                className: "setting-gear",
+                size: "1.5rem",
+              }}
+            >
+              <div className="box" onClick={createGroupPopup}>
+                <BsPlus />
+                <HiUserGroup />
+              </div>
+            </IconContext.Provider>
+            <IconContext.Provider
+              value={{
+                color: "white",
+                className: "setting-gear",
+                size: "1.5rem",
+              }}
+            >
+              <div className="box" onClick={changeNickNamePopup}>
+                <AiTwotoneSetting />
+              </div>
+            </IconContext.Provider>
+          </div>
+        </Container>
+      )}
+    </>
+  );
+}
+const Container = styled.div`
+  display: grid;
+  grid-template-rows: 10% 75% 15%;
+  overflow: hidden;
+  background-color: #272019;
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    img {
+      height: 2rem;
+    }
+    h3 {
+      color: white;
+      text-transform: uppercase;
+    }
+  }
+  .contacts {
+    background-color: #403129;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    gap: 0.8rem;
+    padding: 1rem 0;
+    &::-webkit-scrollbar {
+      width: 0.2rem;
+      &-thumb {
+        background-color: #eeeeee37;
+        width: 0.1rem;
+        border-radius: 1rem;
+      }
+    }
+    .contact {
+      background-color: #b49d8965;
+      min-height: 5rem;
+      cursor: pointer;
+      width: 90%;
+      border-radius: 0.2rem;
+      padding: 0.4rem 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      transition: 0.3s ease-in-out;
+      .avatar {
+>>>>>>> Stashed changes
         img {
             height: 2rem;
         }
@@ -210,6 +333,7 @@ const Container = styled.div`
             text-transform: uppercase;
         }
     }
+<<<<<<< Updated upstream
     .contacts {
         display: flex;
         flex-direction: column;
@@ -252,8 +376,13 @@ const Container = styled.div`
         .selected {
             background-color: #9a86f9;
         }
+=======
+    .selected {
+      background-color: #b49d89;
+>>>>>>> Stashed changes
     }
 
+<<<<<<< Updated upstream
     .current-user {
         background-color: #0d0d30;
         display: flex;
@@ -279,6 +408,40 @@ const Container = styled.div`
                     font-size: 1rem;
                 }
             }
+=======
+  .current-user {
+    background-color: #272019;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    .avatar {
+      img {
+        height: 3rem;
+        max-inline-size: 100%;
+      }
+    }
+    .username {
+      h2 {
+        color: white;
+      }
+    }
+    .box {
+      border-radius: 0.2rem;
+      cursor: pointer;
+      padding: 0.3rem 0.2rem;
+      transition: 0.2s;
+      &:hover {
+        background-color: #b49d89;
+        outline: none;
+      }
+    }
+    @media screen and (min-width: 720px) and (max-width: 1080px) {
+      gap: 0.5rem;
+      .username {
+        h2 {
+          font-size: 1rem;
+>>>>>>> Stashed changes
         }
     }
 `;
