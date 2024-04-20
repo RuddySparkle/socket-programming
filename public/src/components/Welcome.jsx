@@ -19,6 +19,7 @@ export default function Welcome({ socket }) {
             <h3>Please select a chat to Start messaging.</h3>
         </Container>
     );
+<<<<<<< Updated upstream
 }
 
 const Container = styled.div`
@@ -33,4 +34,40 @@ const Container = styled.div`
     span {
         color: #4e0eff;
     }
+=======
+    await socket.current.emit("disconnect-room");
+  }, []);
+  return (
+    <Container>
+      {/* <img src={Robot} alt="" /> */}
+      <h1>
+        Welcome back, <span>{userName}.</span>
+      </h1>
+      <h3>Please select a chat to Start messaging.</h3>
+    </Container>
+  );
+}
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  flex-direction: column;
+  img {
+    height: 20rem;
+  } 
+  h1 {
+    color: #5e483c;
+    font-weight: 500;
+  }
+  h3 {
+    color: #5e483c;
+    font-weight: 500;
+  }
+  span {
+    color: #403129;
+    font-weight: 700;
+  }
+>>>>>>> Stashed changes
 `;

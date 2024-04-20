@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { registerRoute } from '../utils/APIRoutes';
 
 export default function Register() {
+<<<<<<< Updated upstream
     const navigate = useNavigate();
     const toastOptions = {
         position: 'bottom-right',
@@ -21,6 +22,22 @@ export default function Register() {
         password: '',
         confirmPassword: '',
     });
+=======
+  const navigate = useNavigate();
+  const toastOptions = {
+    position: 'top-center',
+    autoClose: 5000,
+    pauseOnHover: true,
+    draggable: false,
+    theme: "light",
+  };
+  const [values, setValues] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+>>>>>>> Stashed changes
 
     useEffect(() => {
         if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
