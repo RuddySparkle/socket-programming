@@ -1,13 +1,13 @@
-function formatMessage(username, text){
+function formatMessage(username, text) {
     var currentDate = new Date();
     // convert to MM DD YYYY HH:MM
-    currentDate = currentDate.toLocaleString("en-US");
-    
+    currentDate = currentDate.toLocaleString('en-US');
+
     return {
-        username, 
+        username,
         text,
-        time: currentDate
-    }
+        time: currentDate,
+    };
 }
 
-module.exports = formatMessage
+module.exports = formatMessage;
