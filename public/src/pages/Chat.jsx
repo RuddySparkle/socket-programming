@@ -14,13 +14,19 @@ export default function Chat() {
     const [contacts, setContacts] = useState([]);
     const [currentChat, setCurrentChat] = useState(undefined);
     const [currentUser, setCurrentUser] = useState(undefined);
-    useEffect(async () => {
-        if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-            navigate('/login');
-        } else {
-            setCurrentUser(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)));
+    const localhostKey = localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY);
+
+    useEffect(() => {
+        async function fetchData() {
+            if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+                navigate('/login');
+            } else {
+                setCurrentUser(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)));
+            }
         }
-    }, []);
+        fetchData();
+    }, [localhostKey, navigate]);
+
     useEffect(() => {
         if (currentUser) {
             socket.current = io(host);
@@ -28,32 +34,36 @@ export default function Chat() {
         }
     }, [currentUser]);
 
-    useEffect(async () => {
-        if (currentUser) {
-            if (currentUser.isAvatarImageSet) {
-                const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-                setContacts(data.data);
+    useEffect(() => {
+        async function fetchData() {
+            if (currentUser) {
+                if (currentUser.isAvatarImageSet) {
+                    const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+                    setContacts(data.data);
 
-                // fetch group chats
-                const group = await axios.get(`${allGroupsRoute}/${currentUser._id}`);
-                group.data.map((g) => {
-                    const groupformat = {
-                        avatarImage: undefined,
-                        email: '',
-                        username: '',
-                        nickname: '',
-                        _id: '',
-                    };
-                    groupformat.username = g.name;
-                    groupformat.nickname = g.name;
-                    groupformat._id = g._id;
-                    setContacts((prev) => [...prev, groupformat]);
-                });
-            } else {
-                navigate('/setAvatar');
+                    // fetch group chats
+                    const group = await axios.get(`${allGroupsRoute}/${currentUser._id}`);
+                    group.data.map((g) => {
+                        const groupformat = {
+                            avatarImage: undefined,
+                            email: '',
+                            username: '',
+                            nickname: '',
+                            _id: '',
+                        };
+                        groupformat.username = g.name;
+                        groupformat.nickname = g.name;
+                        groupformat._id = g._id;
+                        setContacts((prev) => [...prev, groupformat]);
+                        return groupformat;
+                    });
+                } else {
+                    navigate('/setAvatar');
+                }
             }
         }
-    }, [currentUser]);
+        fetchData();
+    }, [currentUser, navigate]);
     const handleChatChange = (chat) => {
         setCurrentChat(chat);
     };
