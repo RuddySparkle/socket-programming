@@ -22,13 +22,16 @@ export default function ChatContainer({ currentChat, socket }) {
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(async () => {
-        if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-            navigate('/login');
-        } else {
-            setCurrentUser(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)));
+    useEffect(() => {
+        async function fetchData() {
+            if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+                navigate('/login');
+            } else {
+                setCurrentUser(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)));
+            }
         }
-    }, []);
+        fetchData();
+    }, [navigate]);
 
     useEffect(() => {
         async function fetchData() {
@@ -48,7 +51,7 @@ export default function ChatContainer({ currentChat, socket }) {
             }
         }
         fetchData();
-    }, [currentChat]);
+    }, [currentChat, currentUser._id]);
 
     useEffect(() => {
         const getCurrentChat = async () => {
@@ -94,7 +97,7 @@ export default function ChatContainer({ currentChat, socket }) {
         socket.current.on('msg-recieve', (msg) => {
             setArrivalMessage({ fromSelf: false, message: msg });
         });
-    }, []);
+    }, [socket]);
 
     useEffect(() => {
         arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);

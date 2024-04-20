@@ -3,10 +3,13 @@ import styled from 'styled-components';
 import Robot from '../assets/robot.gif';
 export default function Welcome({ socket }) {
     const [userName, setUserName] = useState('');
-    useEffect(async () => {
-        setUserName(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)).username);
-        await socket.current.emit('disconnect-room');
-    }, []);
+    useEffect(() => {
+        async function refetchData() {
+            setUserName(await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)).username);
+            await socket.current.emit('disconnect-room');
+        }
+        refetchData();
+    }, [socket]);
     return (
         <Container>
             <img src={Robot} alt="" />
