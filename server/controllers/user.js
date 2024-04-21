@@ -1,5 +1,5 @@
-const User = require('../models/userModel');
-const ChatGroup = require('../models/chatGroupModel');
+const User = require('../models/User');
+const ChatGroup = require('../models/ChatGroup');
 const bcrypt = require('bcrypt');
 
 module.exports.login = async (req, res, next) => {

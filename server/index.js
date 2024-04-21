@@ -1,31 +1,22 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const messageRoutes = require('./routes/messages');
 const app = express();
 const socket = require('socket.io');
 const formatMessage = require('./utils/messages');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
+const connectDB = require('./database/mongo');
 require('dotenv').config({ path: '.env.local' });
 
 app.use(cors());
 app.use(express.json());
 
-mongoose
-    .connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => {
-        console.log('DB Connetion Successful');
-    })
-    .catch((err) => {
-        console.log(err.message);
-    });
-
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
+
+// Connect to MongoDB
+connectDB();
 
 const server = app.listen(process.env.PORT, () => console.log(`Server started on ${process.env.PORT}`));
 const io = socket(server, {
