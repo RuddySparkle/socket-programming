@@ -129,12 +129,14 @@ export default function ChatContainer({ currentChat, socket }) {
                     return (
                         <div ref={scrollRef} key={uuidv4()}>
                             <div className={`message ${message.fromSelf ? 'sended' : 'recieved'}`}>
-                                <div className="content ">
-                                    <p>
-                                        ({message.message.username}){message.message.time}
+                                <div>
+                                    <p className="time-sent">
+                                      {message.message.time}
                                     </p>
-                                    <br />
-                                    <p>{message.message.text}</p>
+                                    {/* <br /> */}
+                                    <p className="content">
+                                      {message.message.text}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +155,7 @@ gap: 0.1rem;
 overflow: hidden;
 border-radius: 0.2rem;
 @media screen and (min-width: 720px) and (max-width: 1080px) {
-  grid-template-rows: 15% 70% 1=6%;
+  grid-template-rows: 15% 70% 16%;
 }
 .chat-header {
   display: flex;
@@ -194,28 +196,31 @@ border-radius: 0.2rem;
   .message {
     display: flex;
     align-items: center;
-    .content {
-      max-width: 100%;
-      overflow-wrap: break-word;
-      padding: 1rem;
-      font-size: 1.1rem;
+    .time-sent {
+      font-size: 0.8rem;
       border-radius: 1rem;
       color: #403129;
-      @media screen and (min-width: 720px) and (max-width: 1080px) {
-        max-width: 70%;
-      }
-      
+    }
+    .content {
+      max-width: 500px;
+      overflow-wrap: break-word;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 1rem;
+      color: #403129;    
     }
   }
   .sended {
-    justify-content: flex-end;
+    justify-content: end;
+    text-align: end;
     .content {
       background-color: #d9e8d8;
     }
   }
   .recieved {
-    justify-content: flex-start;
+    justify-content: start;
+    text-align: start;
     .content {
-      background-color: #9900ff;
+      background-color: #60a05b;
     }
 `;

@@ -29,10 +29,10 @@ export default function ChatInput({ handleSendMsg, username }) {
   return (
     <Container>
       <div className="button-container">
-        <div className="emoji">
+        {/* <div className="emoji">
           <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
           {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
-        </div>
+        </div> */}
       </div>
       <form className="input-container" onSubmit={(event) => sendChat(event)}>
         <input
@@ -153,7 +153,7 @@ const Container = styled.div`
       }
       &:hover {
         cursor: pointer;
-        background-color: #ffc968;
+        background-color: #e97603;
       }
       svg {
         font-size: 2rem;

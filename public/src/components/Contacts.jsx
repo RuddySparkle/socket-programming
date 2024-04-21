@@ -128,8 +128,7 @@ export default function Contacts({ contacts, changeChat, socket }) {
             {currentUserImage && currentUserImage && (
                 <Container>
                     <div className="brand">
-                        <img src={Logo} alt="logo" />
-                        <h3>J H N P</h3>
+                        <h3>เตเต้ทำงานแย้ว!</h3>
                     </div>
                     <div className="contacts">
                         {contacts.map((contact, index) => {
@@ -196,8 +195,9 @@ const Container = styled.div`
     display: grid;
     grid-template-rows: 10% 75% 15%;
     overflow: hidden;
-    background-color: #080425;
+    background-color: #403129;
     .brand {
+      background-color: #221c16;
         display: flex;
         align-items: center;
         gap: 1rem;
@@ -216,6 +216,7 @@ const Container = styled.div`
         align-items: center;
         overflow: auto;
         gap: 0.8rem;
+        padding: 1rem 0;
         &::-webkit-scrollbar {
             width: 0.2rem;
             &-thumb {
@@ -225,7 +226,7 @@ const Container = styled.div`
             }
         }
         .contact {
-            background-color: #eeeeee37;
+            background-color: #9a7c6260;
             min-height: 5rem;
             cursor: pointer;
             width: 90%;
@@ -234,7 +235,11 @@ const Container = styled.div`
             display: flex;
             gap: 1rem;
             align-items: center;
-            transition: 0.5s ease-in-out;
+            transition: 0.2s ease-in-out;
+            &:hover {
+              background-color: #9a7c62;
+              cursor: pointer;
+            }
             .avatar {
                 img {
                     height: 3rem;
@@ -250,16 +255,16 @@ const Container = styled.div`
             }
         }
         .selected {
-            background-color: #9a86f9;
+            background-color: #9a7c62;
         }
     }
 
     .current-user {
-        background-color: #0d0d30;
+        background-color: #221c16;
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 2rem;
+        gap: 1.2rem;
         .avatar {
             img {
                 height: 3rem;
@@ -279,6 +284,15 @@ const Container = styled.div`
                     font-size: 1rem;
                 }
             }
+        }
+        .box {
+          cursor: pointer;
+          padding: 0.3rem;
+          border-radius: 0.2rem;
+          transition: 0.2s;
+          &:hover {
+            background-color: #c1ad9d;
+          }
         }
     }
 `;
