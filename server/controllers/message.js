@@ -148,21 +148,3 @@ module.exports.addMessageChatGroups = async (req, res, next) => {
         next(ex);
     }
 };
-
-module.exports.editMessageChatGroups = async (req, res, next) => {
-    try {
-        const { chatName, message, sender, time } = req.body;
-        const chatGroup = await ChatGroup.find({ name: chatName });
-        if (chatGroup.length === 0) {
-            return res.status(400).json({ success: 'false', msg: 'Chat group does not exist' });
-        }
-        const updatedChatGroup = await ChatGroup.findOneAndUpdate(
-            { name: chatName, 'messages.sender': sender, 'messages.message.time': time },
-            { $set: { 'messages.$.message.text': message } },
-            { new: true },
-        );
-        res.json(updatedChatGroup);
-    } catch (ex) {
-        next(ex);
-    }
-};
