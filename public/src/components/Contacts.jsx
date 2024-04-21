@@ -18,6 +18,9 @@ export default function Contacts({ contacts, changeChat, socket }) {
     const [currentSelected, setCurrentSelected] = useState(undefined);
     const [modalVisible, setModalVisible] = useState(false);
     const [newNickname, setNewNickname] = useState('');
+    const [groupname, setGroupname] = useState('');
+    const [groupVisible, setGroupVisible] = useState(false);
+    const [groupCreationMessage, setGroupCreationMessage] = useState('');
 
     useEffect(() => {
         async function fetchData() {
@@ -113,22 +116,26 @@ export default function Contacts({ contacts, changeChat, socket }) {
         changeNickname(newNickname);
         closeModal(); // Close the modal after submission
     };
-    function createGroupPopup() {
-        var x;
-        var groupname = prompt(
-            "Please enter group's name that you want to create or group's name that you want to join",
-        );
-        if (groupname != null) {
-            // click OK button
-            createGroup(groupname);
-            x = 'Hello Group ' + groupname + '! We are already create your group !';
-            alert(x);
-        } else {
-            // click Cancel button
-            x = 'Create your group next time ! bye !';
-            alert(x);
+    const submitGroupname = () => {
+        if (groupname.trim() === '') {
+            alert("Please enter the group's name!");
+            return;
         }
-    }
+        createGroup(groupname);
+        setGroupCreationMessage(`Hello Group ${groupname}! Your group has been created.`);
+        setGroupname(''); // Clear the input field
+        closeGroupModal(); // Close the modal after submission
+    };
+    
+    // Function to open the modal for creating a group
+    const openGroupModal = () => {
+        setGroupVisible(true);
+    };
+    
+    // Function to close the modal for creating a group
+    const closeGroupModal = () => {
+        setGroupVisible(false);
+    };
 
     return (
         <>
@@ -176,10 +183,31 @@ export default function Contacts({ contacts, changeChat, socket }) {
                                 size: '1.5rem',
                             }}
                         >
-                            <div className="box" onClick={createGroupPopup}>
+                            <div className="box" onClick={openGroupModal}>
                                 <BsPlus />
                                 <HiUserGroup />
                             </div>
+                            {groupVisible && (
+                            <Modal>
+                            <ModalContent>
+                                {groupCreationMessage ? (
+                                    <p>{groupCreationMessage}</p>
+                                ) : (
+                                    <>
+                                        <p>Please enter the group's name:</p>
+                                        <input
+                                            type="text"
+                                            id="newGroupname"
+                                            value={groupname}
+                                            onChange={(e) => setGroupname(e.target.value)}
+                                        />
+                                        <button onClick={submitGroupname}>Create Group</button>
+                                        <button className="cancel-button" onClick={closeGroupModal}>Cancel</button>
+                                    </>
+                                )}
+                            </ModalContent>
+                        </Modal>
+                        )}
                         </IconContext.Provider>
                         <IconContext.Provider
                             value={{
@@ -378,7 +406,7 @@ const Modal = styled.div`
 `;
 
 const ModalContent = styled.div`
-    background-color: #f7f7f7;
+    background-color: #fca300;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     padding: 20px;
