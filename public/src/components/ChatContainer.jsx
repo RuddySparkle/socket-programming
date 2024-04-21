@@ -276,7 +276,7 @@ border-radius: 0.2rem;
     }
   }
   .editedLabel {
-    color: #aeb4ad;
+    color: #6b6a6a;
     font-size: 0.8rem;
   }
   .recieved {
