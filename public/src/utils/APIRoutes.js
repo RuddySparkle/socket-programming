@@ -5,6 +5,7 @@ export const logoutRoute = `${host}/api/auth/logout`;
 export const allUsersRoute = `${host}/api/auth/allusers`;
 export const allGroupsRoute = `${host}/api/auth/allgroups`;
 export const sendMessageRoute = `${host}/api/messages/addmsg`;
+export const editMessageRoute = `${host}/api/messages/editmsg`;
 export const recieveMessageRoute = `${host}/api/messages/getmsg`;
 export const sendGroupMessageRoute = `${host}/api/messages/addmsggroup`;
 export const recieveGroupMessageRoute = `${host}/api/messages/getmsggroup`;
