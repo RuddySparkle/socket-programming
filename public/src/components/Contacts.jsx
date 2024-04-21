@@ -231,7 +231,7 @@ const Container = styled.div`
             cursor: pointer;
             width: 90%;
             border-radius: 0.2rem;
-            padding: 0.4rem;
+            padding: 0.5rem 1rem;
             display: flex;
             gap: 1rem;
             align-items: center;
@@ -264,7 +264,7 @@ const Container = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 1.2rem;
+        gap: 1rem;
         .avatar {
             img {
                 height: 3rem;

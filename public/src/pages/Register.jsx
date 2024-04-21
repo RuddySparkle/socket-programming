@@ -51,20 +51,26 @@ export default function Register() {
         return true;
     };
 
+    const generateMultiAvatar = (query) =>
+        `https://api.multiavatar.com/${query}.png?apikey=${process.env.REACT_APP_MA_API_KEY}`;
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (handleValidation()) {
+            const avatarImage =  generateMultiAvatar(Math.random().toString(36).substring(2));
             const { email, username, password } = values;
             const { data } = await axios.post(registerRoute, {
                 username,
                 email,
                 password,
+                avatarImage,
             });
 
             if (data.status === false) {
                 toast.error(data.msg, toastOptions);
             }
             if (data.status === true) {
+                console.log(avatarImage)
                 localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY, JSON.stringify(data.user));
                 navigate('/');
             }
