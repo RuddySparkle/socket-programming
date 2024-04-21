@@ -12,7 +12,7 @@ export default function Welcome({ socket }) {
     }, [socket]);
     return (
         <Container>
-            <img src={Robot} alt="" />
+            {/* <img src={Robot} alt="" /> */}
             <h1>
                 Welcome, <span>{userName}!</span>
             </h1>
