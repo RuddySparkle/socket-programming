@@ -131,7 +131,7 @@ export default function ChatContainer({ currentChat, socket }) {
                             <div className={`message ${message.fromSelf ? 'sended' : 'recieved'}`}>
                                 <div>
                                     <p className="time-sent">
-                                      {message.message.time}
+                                      {message.fromSelf ? '' : "(" + message.message.username + ")"} {message.message.time}
                                     </p>
                                     {/* <br /> */}
                                     <p className="content">

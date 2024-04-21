@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Robot from '../assets/robot.gif';
+import Logout from './Logout';
+
 export default function Welcome({ socket }) {
     const [userName, setUserName] = useState('');
     useEffect(() => {
@@ -17,6 +19,13 @@ export default function Welcome({ socket }) {
                 Welcome, <span>{userName}!</span>
             </h1>
             <h3>Please select a chat to Start messaging.</h3>
+            <br />
+            <h2>
+              Don't wanna chat right now?
+            </h2>
+            <div className="chat-header">
+                <Logout />
+            </div>
         </Container>
     );
 }
@@ -30,16 +39,19 @@ const Container = styled.div`
   img {
     height: 20rem;
   } 
-  h1 {
+  h1, h3 {
     color: #5e483c;
     font-weight: 500;
   }
-  h3 {
-    color: #5e483c;
+  h2 {
+    color: #403429;
     font-weight: 500;
   }
   span {
     color: #403129;
     font-weight: 700;
+  }
+  .chat-header {
+    padding: 0.5rem;
   }
 `;
