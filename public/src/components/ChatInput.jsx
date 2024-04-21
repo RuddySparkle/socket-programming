@@ -26,28 +26,28 @@ export default function ChatInput({ handleSendMsg, username }) {
         }
     };
 
-  return (
-    <Container>
-      <div className="button-container">
-        {/* <div className="emoji">
+    return (
+        <Container>
+            <div className="button-container">
+                {/* <div className="emoji">
           <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
           {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
         </div> */}
-      </div>
-      <form className="input-container" onSubmit={(event) => sendChat(event)}>
-        <input
-          type="text"
-          placeholder="type your message here"
-          onChange={(e) => setMsg(e.target.value)}
-          value={msg}
-        />
-        <button type="submit">
-          <IoMdSend />
-          <h2>Send</h2>
-        </button>
-      </form>
-    </Container>
-  );
+            </div>
+            <form className="input-container" onSubmit={(event) => sendChat(event)}>
+                <input
+                    type="text"
+                    placeholder="type your message here"
+                    onChange={(e) => setMsg(e.target.value)}
+                    value={msg}
+                />
+                <button type="submit">
+                    <IoMdSend />
+                    <h2>Send</h2>
+                </button>
+            </form>
+        </Container>
+    );
 }
 
 const Container = styled.div`

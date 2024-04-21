@@ -9,6 +9,7 @@ import {
     recieveMessageRoute,
     sendGroupMessageRoute,
     recieveGroupMessageRoute,
+    editMessageRoute,
 } from '../utils/APIRoutes';
 import defaultAvatar from '../assets/default_groupchat.jpeg';
 import { useNavigate } from 'react-router-dom';
@@ -37,21 +38,61 @@ export default function ChatContainer({ currentChat, socket }) {
         async function fetchData() {
             const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
             if (currentChat.email !== '') {
+                console.log('from', data._id, 'to', currentChat._id);
                 const response = await axios.post(recieveMessageRoute, {
                     from: data._id,
                     to: currentChat._id,
                 });
                 console.log(response);
+
                 setMessages(response.data);
             } else {
-                const response = await axios.post(`${recieveGroupMessageRoute}/${currentUser._id}`, {
+                console.log('chatname', currentChat.username);
+                const response = await axios.post(`${recieveGroupMessageRoute}`, {
                     chatName: currentChat.username,
+                    user: data._id,
                 });
+                console.log(response);
                 setMessages(response.data);
             }
         }
         fetchData();
     }, [currentChat, currentUser._id]);
+
+    const editMessageHandler = async (message) => {
+        // add window alert to edit message
+        console.log(message);
+        if (message.fromSelf) {
+            const newMessage = prompt('Edit your message', message.message.text);
+            if (newMessage === null) {
+                return;
+            }
+            if (newMessage) {
+                console.log('Edit message', newMessage);
+                console.log('message', message, 'message id', message._id);
+                // update message in the database
+                // convert time to mongeDB format
+
+                const response = await axios.put(`${editMessageRoute}`, {
+                    messageId: message._id,
+                    message: newMessage,
+                });
+                console.log(response);
+                if (response.status === 200) {
+                    const msgs = [...messages];
+                    msgs[messages.indexOf(message)].message.text = newMessage;
+                    // set classnames for css to edit message
+                    msgs[messages.indexOf(message)].className += ' edited';
+                    setMessages(msgs);
+                    console.log(msgs);
+                    return true;
+                } else {
+                    alert('Failed to edit message');
+                }
+            }
+        }
+        return false;
+    };
 
     useEffect(() => {
         const getCurrentChat = async () => {
@@ -71,26 +112,32 @@ export default function ChatContainer({ currentChat, socket }) {
                 msg: msg.text,
                 username: data.username,
             });
-            await axios.post(sendMessageRoute, {
+            const res = await axios.post(sendMessageRoute, {
                 from: data._id,
                 to: currentChat._id,
                 message: msg.text,
                 time: msg.time,
                 username: data.username,
             });
+            // set msgs id
+            msg.id = res.data.id;
         } else {
             socket.current.emit('send-group-message', msg.text);
-            await axios.post(sendGroupMessageRoute, {
+            console.log('chatname', currentChat.username);
+            const res = await axios.post(sendGroupMessageRoute, {
                 chatName: currentChat.username,
                 message: msg.text,
                 sender: data._id,
                 time: msg.time,
                 username: data.username,
             });
+            // set msgs id
+            msg.id = res.data.id;
         }
         const msgs = [...messages];
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
+        console.log(msgs);
     };
 
     useEffect(() => {
@@ -128,15 +175,20 @@ export default function ChatContainer({ currentChat, socket }) {
                 {messages.map((message) => {
                     return (
                         <div ref={scrollRef} key={uuidv4()}>
-                            <div className={`message ${message.fromSelf ? 'sended' : 'recieved'}`}>
+                            <div
+                                className={`message ${message.fromSelf ? 'sended' : 'recieved'} ${message.edited ? 'edited' : ''}`}
+                                onClick={() => {
+                                    editMessageHandler(message);
+                                }}
+                            >
                                 <div>
                                     <p className="time-sent">
-                                      {message.fromSelf ? '' : "(" + message.message.username + ")"} {message.message.time}
+                                        {message.fromSelf ? '' : '(' + message.message.username + ')'}{' '}
+                                        {message.message.time}
                                     </p>
                                     {/* <br /> */}
-                                    <p className="content">
-                                      {message.message.text}
-                                    </p>
+                                    <p className="content">{message.message.text}</p>
+                                    {message.edited && <p className="editedLabel">(edited)</p>}
                                 </div>
                             </div>
                         </div>
@@ -216,6 +268,16 @@ border-radius: 0.2rem;
     .content {
       background-color: #d9e8d8;
     }
+  }
+  .sended:hover {
+    cursor: pointer;
+    .content {
+      background-color: #D1DFD0;
+    }
+  }
+  .editedLabel {
+    color: #6b6a6a;
+    font-size: 0.8rem;
   }
   .recieved {
     justify-content: start;
