@@ -16,6 +16,11 @@ export default function Contacts({ contacts, changeChat, socket }) {
     const [currentUserId, setCurrentUserId] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [newNickname, setNewNickname] = useState('');
+    const [groupname, setGroupname] = useState('');
+    const [groupVisible, setGroupVisible] = useState(false);
+    const [groupCreationMessage, setGroupCreationMessage] = useState('');
 
     useEffect(() => {
         async function fetchData() {
@@ -92,36 +97,45 @@ export default function Contacts({ contacts, changeChat, socket }) {
         }
     };
 
-    function changeNickNamePopup() {
-        var x;
-        var nickname = prompt('Please enter your new nick name');
-        if (nickname != null) {
-            // click OK button
-            changeNickname(nickname);
-            x = 'Hello ' + nickname + '! We are already change your nickname !';
-            alert(x);
-        } else {
-            // click Cancel button
-            x = 'Change your nickname next time ! bye !';
-            alert(x);
+    // Function to open the modal
+    const openModal = () => {
+        setModalVisible(true);
+    };
+
+    // Function to close the modal
+    const closeModal = () => {
+        setModalVisible(false);
+    };
+
+    // Function to submit the new nickname
+    const submitNickname = () => {
+        if (newNickname.trim() == '') {
+            alert('Please enter a nickname!');
+            return;
         }
-    }
-    function createGroupPopup() {
-        var x;
-        var groupname = prompt(
-            "Please enter group's name that you want to create or group's name that you want to join",
-        );
-        if (groupname != null) {
-            // click OK button
-            createGroup(groupname);
-            x = 'Hello Group ' + groupname + '! We are already create your group !';
-            alert(x);
-        } else {
-            // click Cancel button
-            x = 'Create your group next time ! bye !';
-            alert(x);
+        changeNickname(newNickname);
+        closeModal(); // Close the modal after submission
+    };
+    const submitGroupname = () => {
+        if (groupname.trim() === '') {
+            alert("Please enter the group's name!");
+            return;
         }
-    }
+        createGroup(groupname);
+        setGroupCreationMessage(`Hello Group ${groupname}! Your group has been created.`);
+        setGroupname(''); // Clear the input field
+        closeGroupModal(); // Close the modal after submission
+    };
+    
+    // Function to open the modal for creating a group
+    const openGroupModal = () => {
+        setGroupVisible(true);
+    };
+    
+    // Function to close the modal for creating a group
+    const closeGroupModal = () => {
+        setGroupVisible(false);
+    };
 
     return (
         <>
@@ -169,10 +183,31 @@ export default function Contacts({ contacts, changeChat, socket }) {
                                 size: '1.5rem',
                             }}
                         >
-                            <div className="box" onClick={createGroupPopup}>
+                            <div className="box" onClick={openGroupModal}>
                                 <BsPlus />
                                 <HiUserGroup />
                             </div>
+                            {groupVisible && (
+                            <Modal>
+                            <ModalContent>
+                                {groupCreationMessage ? (
+                                    <p>{groupCreationMessage}</p>
+                                ) : (
+                                    <>
+                                        <p>Please enter the group's name:</p>
+                                        <input
+                                            type="text"
+                                            id="newGroupname"
+                                            value={groupname}
+                                            onChange={(e) => setGroupname(e.target.value)}
+                                        />
+                                        <button onClick={submitGroupname}>Create Group</button>
+                                        <button className="cancel-button" onClick={closeGroupModal}>Cancel</button>
+                                    </>
+                                )}
+                            </ModalContent>
+                        </Modal>
+                        )}
                         </IconContext.Provider>
                         <IconContext.Provider
                             value={{
@@ -181,9 +216,19 @@ export default function Contacts({ contacts, changeChat, socket }) {
                                 size: '1.5rem',
                             }}
                         >
-                            <div className="box" onClick={changeNickNamePopup}>
+                            <div className="box" onClick={openModal}>
                                 <AiTwotoneSetting />
                             </div>
+                            {modalVisible && (
+                            <Modal>
+                                <ModalContent>
+                                    <p>Please enter your new nickname:</p>
+                                    <input type="text" id="newNickname" value={newNickname} onChange={(e) => setNewNickname(e.target.value)} />
+                                    <button onClick={submitNickname}>Submit</button>
+                                    <button className="cancel-button" onClick={closeModal}>Cancel</button>
+                                </ModalContent>
+                            </Modal>
+                        )}
                         </IconContext.Provider>
                     </div>
                 </Container>
@@ -295,4 +340,76 @@ const Container = styled.div`
           }
         }
     }
+    /* Close button style */
+    .close {
+        color: #aaa;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+
+    input[type="text"] {
+        padding: 10px;
+        width: 80%;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+        margin: 0 10px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    .cancel-button {
+        background-color: #f44336;
+    }
+
+    .cancel-button:hover {
+        background-color: #d32f2f;
+    }
+`;
+
+
+const Modal = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+`;
+
+const ModalContent = styled.div`
+    background-color: #fca300;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    width: 350px;
 `;
