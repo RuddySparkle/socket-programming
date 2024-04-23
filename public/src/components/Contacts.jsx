@@ -141,8 +141,70 @@ export default function Contacts({ contacts, changeChat, socket }) {
         <>
             {currentUserImage && currentUserImage && (
                 <Container>
-                    <div className="brand">
-                        <h3>เตเต้ทำงานแย้ว!</h3>
+                    <div className="tool-box">
+                        <IconContext.Provider
+                            value={{
+                                color: 'white',
+                                className: 'setting-gear',
+                                size: '1.5rem',
+                            }}
+                        >
+                            <div className="box" onClick={openGroupModal}>
+                                <BsPlus />
+                                <HiUserGroup />
+                            </div>
+                            {groupVisible && (
+                            <Modal>
+                            <ModalContent>
+                                {groupCreationMessage ? (
+                                    <p>{groupCreationMessage}</p>
+                                ) : (
+                                    <>
+                                        <p>Please enter the group's name:</p>
+                                        <input
+                                            type="text"
+                                            id="newGroupname"
+                                            value={groupname}
+                                            onChange={(e) => setGroupname(e.target.value)}
+                                        />
+                                        <button onClick={submitGroupname}>Create Group</button>
+                                        <button className="cancel-button" onClick={closeGroupModal}>Cancel</button>
+                                    </>
+                                )}
+                            </ModalContent>
+                        </Modal>
+                        )}
+                        </IconContext.Provider>
+                        <IconContext.Provider
+                            value={{
+                                color: 'white',
+                                className: 'setting-gear',
+                                size: '1.5rem',
+                            }}
+                        >
+                            <div className="nickname-change" onClick={openModal}>
+                                {/* <AiTwotoneSetting /> */}
+                                Change Nickname
+                            </div>
+                            {modalVisible && (
+                            <Modal>
+                                <ModalContent>
+                                    <p>Please enter your new nickname:</p>
+                                    <input type="text" id="newNickname" value={newNickname} onChange={(e) => setNewNickname(e.target.value)} />
+                                    <button onClick={submitNickname}>Submit</button>
+                                    <button className="cancel-button" onClick={closeModal}>Cancel</button>
+                                </ModalContent>
+                            </Modal>
+                        )}
+                        </IconContext.Provider>
+                    </div>
+                    <div className="current-user">
+                        <div className="username">
+                            <h2>{currentNickname}</h2>
+                        </div>
+                        <div className="avatar">
+                            <img src={`${currentUserImage}`} alt="avatar" />
+                        </div>
                     </div>
                     <div className="contacts">
                         {contacts.map((contact, index) => {
@@ -238,7 +300,7 @@ export default function Contacts({ contacts, changeChat, socket }) {
 }
 const Container = styled.div`
     display: grid;
-    grid-template-rows: 10% 75% 15%;
+    grid-template-rows: 8% 12% 80%;
     overflow: hidden;
     background-color: #403129;
     .brand {
@@ -261,7 +323,7 @@ const Container = styled.div`
         align-items: center;
         overflow: auto;
         gap: 0.8rem;
-        padding: 1rem 0;
+        padding: 1rem 1rem;
         &::-webkit-scrollbar {
             width: 0.2rem;
             &-thumb {
@@ -274,7 +336,7 @@ const Container = styled.div`
             background-color: #9a7c6260;
             min-height: 5rem;
             cursor: pointer;
-            width: 90%;
+            width: 100%;
             border-radius: 0.2rem;
             padding: 0.5rem 1rem;
             display: flex;
@@ -303,20 +365,48 @@ const Container = styled.div`
             background-color: #9a7c62;
         }
     }
+    .tool-box {
+        background-color: #221c16;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1rem;
+        .box {
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 0.2rem;
+            transition: 0.2s;
+            &:hover {
+              background-color: #c1ad9d;
+            }
+        }
+        .nickname-change {
+            background-color: #fca300;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 0.2rem;
+            transition: 0.2s;
+            color: whitesmoke;
+            &:hover {
+              background-color: #e97603;
+            }
+        }
+    }
 
     .current-user {
         background-color: #221c16;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         gap: 1rem;
+        padding: 0 2rem;
         .avatar {
             img {
                 height: 3rem;
                 max-inline-size: 100%;
             }
         }
-
         .username {
             h2 {
                 color: white;
