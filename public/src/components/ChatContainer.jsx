@@ -38,6 +38,7 @@ export default function ChatContainer({ currentChat, socket }) {
         async function fetchData() {
             const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
             if (currentChat.email !== '') {
+                console.log('get messages from private chat');
                 console.log('from', data._id, 'to', currentChat._id);
                 const response = await axios.post(recieveMessageRoute, {
                     from: data._id,
@@ -47,6 +48,7 @@ export default function ChatContainer({ currentChat, socket }) {
 
                 setMessages(response.data);
             } else {
+                console.log('get messages from group chat');
                 console.log('chatname', currentChat.username);
                 const response = await axios.post(`${recieveGroupMessageRoute}`, {
                     chatName: currentChat.username,
