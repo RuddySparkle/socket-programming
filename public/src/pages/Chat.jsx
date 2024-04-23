@@ -93,15 +93,13 @@ const Container = styled.div`
   align-items: center;
   background: linear-gradient(to bottom left, #f29a02 0%, #ffff99 100%);
   .container {
-    height: 85vh;
-    width: 85vw;
-    border: 3px solid #403129;
-    border-radius: 0.5rem;
+    height: 100vh;
+    width: 100vw;
     box-shadow: 0px 0px 30px 5px #403129;
     background-color: #9CC599;
     display: grid;
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 30% 70%;
     @media screen and (min-width: 720px) and (max-width: 1080px) {
-      grid-template-columns: 35% 65%;
+      grid-template-columns: 40% 60%;
     }
 `;

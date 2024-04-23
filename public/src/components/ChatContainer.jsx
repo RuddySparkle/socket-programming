@@ -290,7 +290,6 @@ display: grid;
 grid-template-rows: 12% 75% 13%;
 gap: 0.1rem;
 overflow: hidden;
-border-radius: 0.2rem;
 @media screen and (min-width: 720px) and (max-width: 1080px) {
   grid-template-rows: 15% 70% 16%;
 }
