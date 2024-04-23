@@ -42,9 +42,15 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('receive-msg', (msg) => {
+        console.log(msg)
+        io.emit('receive-msg', msg)
+    })
+
     socket.on('join-room', ({ username, room }) => {
         const user = userJoin(socket.id, username, room);
 
+        console.log(getRoomUsers())
         console.log(user);
 
         socket.join(user.room);
