@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import ChatInput from './ChatInput';
 import Logout from './Logout';
@@ -10,9 +10,12 @@ import {
     sendGroupMessageRoute,
     recieveGroupMessageRoute,
     editMessageRoute,
+    deleteMessageRoute,
 } from '../utils/APIRoutes';
 import defaultAvatar from '../assets/default_groupchat.jpeg';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
 
 export default function ChatContainer({ currentChat, socket }) {
     const [messages, setMessages] = useState([]);
@@ -96,6 +99,27 @@ export default function ChatContainer({ currentChat, socket }) {
         return false;
     };
 
+    const deleteMessageHandler = async (message) => {
+        // add window alert to delete message
+        console.log('Delete message', message._id);
+        const response = await axios.post(`${deleteMessageRoute}`, {
+            messageId: message._id,
+        });
+        console.log(response);
+        if (response.status === 200) {
+            const msgs = [...messages];
+            msgs.splice(
+                messages.findIndex((msg) => msg._id === message._id),
+                1,
+            );
+            setMessages(msgs);
+            console.log(msgs);
+        } else {
+            alert('Failed to delete message');
+        }
+        return false;
+    };
+
     useEffect(() => {
         const getCurrentChat = async () => {
             if (currentChat) {
@@ -140,6 +164,28 @@ export default function ChatContainer({ currentChat, socket }) {
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
         console.log(msgs);
+        async function fetchData() {
+            const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+            if (currentChat.email !== '') {
+                console.log('from', data._id, 'to', currentChat._id);
+                const response = await axios.post(recieveMessageRoute, {
+                    from: data._id,
+                    to: currentChat._id,
+                });
+                console.log(response);
+
+                setMessages(response.data);
+            } else {
+                console.log('chatname', currentChat.username);
+                const response = await axios.post(`${recieveGroupMessageRoute}`, {
+                    chatName: currentChat.username,
+                    user: data._id,
+                });
+                console.log(response);
+                setMessages(response.data);
+            }
+        }
+        fetchData();
     };
 
     useEffect(() => {
@@ -179,11 +225,12 @@ export default function ChatContainer({ currentChat, socket }) {
                         <div ref={scrollRef} key={uuidv4()}>
                             <div
                                 className={`message ${message.fromSelf ? 'sended' : 'recieved'} ${message.edited ? 'edited' : ''}`}
-                                onClick={() => {
-                                    editMessageHandler(message);
-                                }}
                             >
-                                <div>
+                                <div
+                                    onClick={() => {
+                                        editMessageHandler(message);
+                                    }}
+                                >
                                     <p className="time-sent">
                                         {message.fromSelf ? '' : '(' + message.message.username + ')'}{' '}
                                         {message.message.time}
@@ -192,6 +239,16 @@ export default function ChatContainer({ currentChat, socket }) {
                                     <p className="content">{message.message.text}</p>
                                     {message.edited && <p className="editedLabel">(edited)</p>}
                                 </div>
+                                {message.fromSelf && (
+                                    <FontAwesomeIcon
+                                        size="lg"
+                                        bounce
+                                        onMouseOver={(e) => (e.target.style.color = 'red')}
+                                        onMouseOut={(e) => (e.target.style.color = 'black')}
+                                        icon={faTrashCan}
+                                        onClick={() => deleteMessageHandler(message)}
+                                    />
+                                )}
                             </div>
                         </div>
                     );
