@@ -187,29 +187,29 @@ export default function ChatContainer({ currentChat, socket }) {
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
         console.log(msgs);
-        socket.current.send(JSON.stringify(msg));
-        async function fetchData() {
-            const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
-            if (currentChat.email !== '') {
-                console.log('from', data._id, 'to', currentChat._id);
-                const response = await axios.post(recieveMessageRoute, {
-                    from: data._id,
-                    to: currentChat._id,
-                });
-                console.log(response);
+        // socket.current.send(JSON.stringify(msg));
+        // async function fetchData() {
+        //     const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+        //     if (currentChat.email !== '') {
+        //         console.log('from', data._id, 'to', currentChat._id);
+        //         const response = await axios.post(recieveMessageRoute, {
+        //             from: data._id,
+        //             to: currentChat._id,
+        //         });
+        //         console.log(response);
 
-                setMessages(response.data);
-            } else {
-                console.log('chatname', currentChat.username);
-                const response = await axios.post(`${recieveGroupMessageRoute}`, {
-                    chatName: currentChat.username,
-                    user: data._id,
-                });
-                console.log(response);
-                setMessages(response.data);
-            }
-        }
-        fetchData();
+        //         setMessages(response.data);
+        //     } else {
+        //         console.log('chatname', currentChat.username);
+        //         const response = await axios.post(`${recieveGroupMessageRoute}`, {
+        //             chatName: currentChat.username,
+        //             user: data._id,
+        //         });
+        //         console.log(response);
+        //         setMessages(response.data);
+        //     }
+        // }
+        // fetchData();
     };
 
     useEffect(() => {
