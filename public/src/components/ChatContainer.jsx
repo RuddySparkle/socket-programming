@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import ChatInput from './ChatInput';
 import Logout from './Logout';
@@ -14,9 +14,9 @@ import {
 } from '../utils/APIRoutes';
 import defaultAvatar from '../assets/default_groupchat.jpeg';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
-import TrashIcon from './TrashIcon';
+import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil';
+import CustomIcon from './CustomIcon';
 
 export default function ChatContainer({ currentChat, socket }) {
     const [messages, setMessages] = useState([]);
@@ -26,7 +26,6 @@ export default function ChatContainer({ currentChat, socket }) {
     const scrollRef = useRef();
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const navigate = useNavigate();
-    const [hoverTrashMsg, setHoverTrashMsg] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -251,11 +250,7 @@ export default function ChatContainer({ currentChat, socket }) {
                             <div
                                 className={`message ${message.fromSelf ? 'sended' : 'recieved'} ${message.edited ? 'edited' : ''}`}
                             >
-                                <div
-                                    onClick={() => {
-                                        editMessageHandler(message);
-                                    }}
-                                >
+                                <div>
                                     <p className="time-sent">
                                         {message.fromSelf ? '' : '(' + message.message.username + ')'}{' '}
                                         {message.message.time}
@@ -265,15 +260,22 @@ export default function ChatContainer({ currentChat, socket }) {
                                     {message.edited && <p className="editedLabel">(edited)</p>}
                                 </div>
                                 {message.fromSelf && (
-                                    <TrashIcon onClickHandler={() => deleteMessageHandler(message)} /> 
-                                    // <FontAwesomeIcon
-                                    //     size="lg"
-                                    //     bounce={message && hoverTrashMsg}
-                                    //     onMouseOver={(e) => (e.target.style.color = 'red', setHoverTrashMsg(message))}
-                                    //     onMouseOut={(e) => (e.target.style.color = 'black', setHoverTrashMsg(null))}
-                                    //     icon={faTrashCan}
-                                    //     onClick={() => deleteMessageHandler(message)}
-                                    // />
+                                    <CustomIcon
+                                        size="lg"
+                                        onClickHandler={() => editMessageHandler(message)}
+                                        faIcon={faPencil}
+                                        colorNormal="black"
+                                        colorHover="blue"
+                                    />
+                                )}
+                                {message.fromSelf && (
+                                    <CustomIcon
+                                        size="lg"
+                                        onClickHandler={() => deleteMessageHandler(message)}
+                                        faIcon={faTrashCan}
+                                        colorNormal="black"
+                                        colorHover="red"
+                                    />
                                 )}
                             </div>
                         </div>
@@ -290,6 +292,7 @@ display: grid;
 grid-template-rows: 12% 75% 13%;
 gap: 0.1rem;
 overflow: hidden;
+border-radius: 0.2rem;
 @media screen and (min-width: 720px) and (max-width: 1080px) {
   grid-template-rows: 15% 70% 16%;
 }
