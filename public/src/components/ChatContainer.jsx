@@ -265,7 +265,7 @@ export default function ChatContainer({ currentChat, socket }) {
                                     {message.edited && <p className="editedLabel">(edited)</p>}
                                 </div>
                                 {message.fromSelf && (
-                                    <TrashIcon onClickHandler={() => deleteMessageHandler(message)} /> 
+                                    <TrashIcon onClickHandler={() => deleteMessageHandler(message)} />
                                     // <FontAwesomeIcon
                                     //     size="lg"
                                     //     bounce={message && hoverTrashMsg}
