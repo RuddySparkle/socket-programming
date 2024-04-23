@@ -38,6 +38,16 @@ export default function ChatContainer({ currentChat, socket }) {
     }, [navigate]);
 
     useEffect(() => {
+        const handleMessageReceived = (msg) => {
+            setMessages((prevMessages) => [...prevMessages, { fromSelf: false, message: msg }]);
+        };
+        socket.current.on('msg-receive', handleMessageReceived);
+        return () => {
+            socket.current.off('msg-receive', handleMessageReceived);
+        };
+    }, [socket]);
+
+    useEffect(() => {
         async function fetchData() {
             const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
             if (currentChat.email !== '') {
@@ -90,13 +100,11 @@ export default function ChatContainer({ currentChat, socket }) {
                     msgs[messages.indexOf(message)].className += ' edited';
                     setMessages(msgs);
                     console.log(msgs);
-                    return true;
                 } else {
                     alert('Failed to edit message');
                 }
             }
         }
-        return false;
     };
 
     const deleteMessageHandler = async (message) => {
@@ -164,6 +172,7 @@ export default function ChatContainer({ currentChat, socket }) {
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
         console.log(msgs);
+        socket.current.send(JSON.stringify(msg));
         async function fetchData() {
             const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
             if (currentChat.email !== '') {

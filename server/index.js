@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
         for (let i = 0; i < users.length; i++) {
             socket.to(users[i].id).emit('msg-recieve', formatMessage(user.username, msg));
         }
-        // io.to(user.room).emit("msg-receive", { msg: msg });
+        // io.to(user.room).emit('msg-receive', { msg: msg });
     });
 
     // Run when client disconnects Chat Messages
