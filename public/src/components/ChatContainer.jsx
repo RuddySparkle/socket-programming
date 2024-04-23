@@ -37,6 +37,20 @@ export default function ChatContainer({ currentChat, socket }) {
         fetchData();
     }, [navigate]);
 
+    // Listen for incoming messages from the server
+    useEffect(() => {
+        // Define a listener for 'msg-received' event
+        const handleMessageReceived = (msg) => {
+            setMessages((prevMessages) => [...prevMessages, { fromSelf: false, message: msg }]);
+        };
+        // Subscribe to the event
+        socket.current.on('msg-received', handleMessageReceived);
+        // Clean up listener when component unmounts
+        return () => {
+            socket.current.off('msg-received', handleMessageReceived);
+        };
+    }, [socket]);
+
     useEffect(() => {
         async function fetchData() {
             const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
