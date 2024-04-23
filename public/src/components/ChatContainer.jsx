@@ -16,6 +16,7 @@ import defaultAvatar from '../assets/default_groupchat.jpeg';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
+import TrashIcon from './TrashIcon';
 
 export default function ChatContainer({ currentChat, socket }) {
     const [messages, setMessages] = useState([]);
@@ -25,6 +26,7 @@ export default function ChatContainer({ currentChat, socket }) {
     const scrollRef = useRef();
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const navigate = useNavigate();
+    const [hoverTrashMsg, setHoverTrashMsg] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -36,6 +38,20 @@ export default function ChatContainer({ currentChat, socket }) {
         }
         fetchData();
     }, [navigate]);
+
+    // Listen for incoming messages from the server
+    useEffect(() => {
+        // Define a listener for 'msg-received' event
+        const handleMessageReceived = (msg) => {
+            setMessages((prevMessages) => [...prevMessages, { fromSelf: false, message: msg }]);
+        };
+        // Subscribe to the event
+        socket.current.on('msg-receive', handleMessageReceived);
+        // Clean up listener when component unmounts
+        return () => {
+            socket.current.off('msg-receive', handleMessageReceived);
+        };
+    }, [socket]);
 
     useEffect(() => {
         const handleMessageReceived = (msg) => {
@@ -249,14 +265,15 @@ export default function ChatContainer({ currentChat, socket }) {
                                     {message.edited && <p className="editedLabel">(edited)</p>}
                                 </div>
                                 {message.fromSelf && (
-                                    <FontAwesomeIcon
-                                        size="lg"
-                                        bounce
-                                        onMouseOver={(e) => (e.target.style.color = 'red')}
-                                        onMouseOut={(e) => (e.target.style.color = 'black')}
-                                        icon={faTrashCan}
-                                        onClick={() => deleteMessageHandler(message)}
-                                    />
+                                    <TrashIcon onClickHandler={() => deleteMessageHandler(message)} /> 
+                                    // <FontAwesomeIcon
+                                    //     size="lg"
+                                    //     bounce={message && hoverTrashMsg}
+                                    //     onMouseOver={(e) => (e.target.style.color = 'red', setHoverTrashMsg(message))}
+                                    //     onMouseOut={(e) => (e.target.style.color = 'black', setHoverTrashMsg(null))}
+                                    //     icon={faTrashCan}
+                                    //     onClick={() => deleteMessageHandler(message)}
+                                    // />
                                 )}
                             </div>
                         </div>
