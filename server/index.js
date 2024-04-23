@@ -21,12 +21,12 @@ connectDB();
 const server = app.listen(process.env.PORT, () => console.log(`Server started on ${process.env.PORT}`));
 const io = socket(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: '*',
         credentials: true,
     },
 });
 
-const botName = 'TwT Bot';
+const Assistant = 'Tortoise Assistant';
 
 global.onlineUsers = new Map();
 io.on('connection', (socket) => {
@@ -43,25 +43,25 @@ io.on('connection', (socket) => {
     });
 
     socket.on('receive-msg', (msg) => {
-        console.log(msg)
-        io.emit('receive-msg', msg)
-    })
+        console.log(msg);
+        io.emit('receive-msg', msg);
+    });
 
     socket.on('join-room', ({ username, room }) => {
         const user = userJoin(socket.id, username, room);
 
-        console.log(getRoomUsers())
+        console.log(getRoomUsers());
         console.log(user);
 
         socket.join(user.room);
         console.log(`${user.username} has joined Room ${room} with ID ${socket.id}`);
         // Welcome current user
-        socket.emit('msg-receive', formatMessage(botName, 'Welcome to ChatCord!'));
+        socket.emit('msg-receive', formatMessage(Assistant, 'Welcome to ChatCord!'));
 
         // Broadcast when a user connects
         socket.broadcast
             .to(user.room)
-            .emit('msg-receive', formatMessage(botName, `${user.username} has joined the chat`));
+            .emit('msg-receive', formatMessage(Assistant, `${user.username} has joined the chat`));
 
         // Send users and room info
         io.to(user.room).emit('roomUsers', {
@@ -89,7 +89,7 @@ io.on('connection', (socket) => {
         const user = userLeave(socket.id);
 
         if (user) {
-            io.to(user.room).emit('msg-receive', formatMessage(botName, `${user.username} has left the chat`));
+            io.to(user.room).emit('msg-receive', formatMessage(Assistant, `${user.username} has left the chat`));
             // Send users and room info
             io.to(user.room).emit('roomUsers', {
                 room: user.room,
