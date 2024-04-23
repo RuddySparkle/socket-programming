@@ -4,19 +4,21 @@ import { IoMdSend } from 'react-icons/io';
 import styled from 'styled-components';
 import Picker from 'emoji-picker-react';
 import formatMessage from '../utils/messages';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane';
+import CustomIcon from './CustomIcon';
 
 export default function ChatInput({ handleSendMsg, username }) {
     const [msg, setMsg] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const handleEmojiPickerhideShow = () => {
-        setShowEmojiPicker(!showEmojiPicker);
-    };
+    // const handleEmojiPickerhideShow = () => {
+    //     setShowEmojiPicker(!showEmojiPicker);
+    // };
 
-    const handleEmojiClick = (event, emojiObject) => {
-        let message = msg;
-        message.text += emojiObject.emoji;
-        setMsg(message);
-    };
+    // const handleEmojiClick = (event, emojiObject) => {
+    //     let message = msg;
+    //     message.text += emojiObject.emoji;
+    //     setMsg(message);
+    // };
 
     const sendChat = (event) => {
         event.preventDefault();
@@ -42,8 +44,15 @@ export default function ChatInput({ handleSendMsg, username }) {
                     value={msg}
                 />
                 <button type="submit">
-                    <IoMdSend />
-                    <h2>Send</h2>
+                    <CustomIcon
+                        size="sm"
+                        onClickHandler={(e) => {
+                            sendChat(e);
+                        }}
+                        faIcon={faPaperPlane}
+                        colorNormal="white"
+                        colorHover="#fca300"
+                    />
                 </button>
             </form>
         </Container>
@@ -157,6 +166,7 @@ const Container = styled.div`
       }
       svg {
         font-size: 2rem;
+        padding: 0.5rem;
         color: white;
       }
     }
