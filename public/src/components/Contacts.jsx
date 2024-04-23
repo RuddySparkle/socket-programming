@@ -263,8 +263,8 @@ export default function Contacts({ contacts, changeChat, socket }) {
                                             value={groupname}
                                             onChange={(e) => setGroupname(e.target.value)}
                                         />
-                                        <button onClick={submitGroupname}>Create Group</button>
                                         <button className="cancel-button" onClick={closeGroupModal}>Cancel</button>
+                                        <button onClick={submitGroupname}>Create Group</button>
                                     </>
                                 )}
                             </ModalContent>
@@ -286,8 +286,8 @@ export default function Contacts({ contacts, changeChat, socket }) {
                                 <ModalContent>
                                     <p>Please enter your new nickname:</p>
                                     <input type="text" id="newNickname" value={newNickname} onChange={(e) => setNewNickname(e.target.value)} />
-                                    <button onClick={submitNickname}>Submit</button>
                                     <button className="cancel-button" onClick={closeModal}>Cancel</button>
+                                    <button onClick={submitNickname}>Submit</button>
                                 </ModalContent>
                             </Modal>
                         )}
