@@ -7,8 +7,11 @@ module.exports.getMessages = async (req, res, next) => {
         const { from, to } = req.body;
 
         const messages = await Messages.find({
-            $or: [{ users: [from, to] }, { users: [to, from] }],
+            isGroup: false,
+            $or: [{ users: { $all: [from, to] } }, { users: { $all: [to, from] } }],
         }).sort({ createdAt: 1 });
+
+        console.log(messages);
 
         const projectedMessages = messages.map((msg) => {
             return {
@@ -21,6 +24,7 @@ module.exports.getMessages = async (req, res, next) => {
                 edited: msg.edited,
                 _id: msg._id,
                 sender: msg.sender,
+                isGroup: msg.isGroup,
             };
         });
         res.json(projectedMessages);
@@ -36,6 +40,7 @@ module.exports.addMessage = async (req, res, next) => {
             message: { text: message, time: time, username: username },
             users: [from, to],
             sender: from,
+            isGroup: false,
         });
 
         if (data) return res.json({ msg: 'Message added successfully.', data: data.id });
@@ -97,7 +102,7 @@ module.exports.getMessagesChatGroups = async (req, res, next) => {
         console.log(chatName);
         const chatGroup = await ChatGroup.findOne({ name: chatName }).populate({
             path: 'messages',
-            select: ['_id', 'message', 'sender', 'edited'],
+            select: ['_id', 'message', 'sender', 'edited', 'isGroup'],
         });
 
         console.log(chatGroup);
@@ -130,7 +135,7 @@ module.exports.addMessageChatGroups = async (req, res, next) => {
         }
         // Add message to messages database
         const data = await Messages.create({
-            message: { text: message, time: time, username: username },
+            message: { text: message, time: time, username: username, isGroup: true },
             users: chatGroup[0].users,
             sender: sender,
         });
