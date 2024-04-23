@@ -6,7 +6,7 @@ const {
     logOut,
     updateNickname,
     getAllChatGroups,
-} = require('../controllers/userController');
+} = require('../controllers/user');
 
 const router = require('express').Router();
 

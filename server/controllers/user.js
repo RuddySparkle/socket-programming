@@ -1,5 +1,5 @@
-const User = require('../models/userModel');
-const ChatGroup = require('../models/chatGroupModel');
+const User = require('../models/User');
+const ChatGroup = require('../models/ChatGroup');
 const bcrypt = require('bcrypt');
 
 module.exports.login = async (req, res, next) => {
@@ -18,7 +18,7 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.register = async (req, res, next) => {
     try {
-        let { username, nickname, email, password } = req.body;
+        let { username, nickname, email, password, avatarImage } = req.body;
         const usernameCheck = await User.findOne({ username });
         if (usernameCheck) return res.json({ msg: 'Username already used', status: false });
         const emailCheck = await User.findOne({ email });
@@ -31,6 +31,7 @@ module.exports.register = async (req, res, next) => {
             username,
             nickname,
             password: hashedPassword,
+            avatarImage,
         });
         delete user.password;
         return res.json({ status: true, user });

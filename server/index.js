@@ -1,31 +1,22 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const messageRoutes = require('./routes/messages');
 const app = express();
 const socket = require('socket.io');
 const formatMessage = require('./utils/messages');
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/users');
+const connectDB = require('./database/mongo');
 require('dotenv').config({ path: '.env.local' });
 
 app.use(cors());
 app.use(express.json());
 
-mongoose
-    .connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => {
-        console.log('DB Connetion Successful');
-    })
-    .catch((err) => {
-        console.log(err.message);
-    });
-
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
+
+// Connect to MongoDB
+connectDB();
 
 const server = app.listen(process.env.PORT, () => console.log(`Server started on ${process.env.PORT}`));
 const io = socket(server, {
@@ -51,9 +42,15 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('receive-msg', (msg) => {
+        console.log(msg)
+        io.emit('receive-msg', msg)
+    })
+
     socket.on('join-room', ({ username, room }) => {
         const user = userJoin(socket.id, username, room);
 
+        console.log(getRoomUsers())
         console.log(user);
 
         socket.join(user.room);
@@ -84,7 +81,7 @@ io.on('connection', (socket) => {
         for (let i = 0; i < users.length; i++) {
             socket.to(users[i].id).emit('msg-recieve', formatMessage(user.username, msg));
         }
-        // io.to(user.room).emit("msg-receive", { msg: msg });
+        // io.to(user.room).emit('msg-receive', { msg: msg });
     });
 
     // Run when client disconnects Chat Messages

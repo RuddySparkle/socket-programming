@@ -16,6 +16,11 @@ export default function Contacts({ contacts, changeChat, socket }) {
     const [currentUserId, setCurrentUserId] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [newNickname, setNewNickname] = useState('');
+    const [groupname, setGroupname] = useState('');
+    const [groupVisible, setGroupVisible] = useState(false);
+    const [groupCreationMessage, setGroupCreationMessage] = useState('');
 
     useEffect(() => {
         async function fetchData() {
@@ -92,44 +97,114 @@ export default function Contacts({ contacts, changeChat, socket }) {
         }
     };
 
-    function changeNickNamePopup() {
-        var x;
-        var nickname = prompt('Please enter your new nick name');
-        if (nickname != null) {
-            // click OK button
-            changeNickname(nickname);
-            x = 'Hello ' + nickname + '! We are already change your nickname !';
-            alert(x);
-        } else {
-            // click Cancel button
-            x = 'Change your nickname next time ! bye !';
-            alert(x);
+    // Function to open the modal
+    const openModal = () => {
+        setModalVisible(true);
+    };
+
+    // Function to close the modal
+    const closeModal = () => {
+        setModalVisible(false);
+    };
+
+    // Function to submit the new nickname
+    const submitNickname = () => {
+        if (newNickname.trim() == '') {
+            alert('Please enter a nickname!');
+            return;
         }
-    }
-    function createGroupPopup() {
-        var x;
-        var groupname = prompt(
-            "Please enter group's name that you want to create or group's name that you want to join",
-        );
-        if (groupname != null) {
-            // click OK button
-            createGroup(groupname);
-            x = 'Hello Group ' + groupname + '! We are already create your group !';
-            alert(x);
-        } else {
-            // click Cancel button
-            x = 'Create your group next time ! bye !';
-            alert(x);
+        changeNickname(newNickname);
+        closeModal(); // Close the modal after submission
+    };
+    const submitGroupname = () => {
+        if (groupname.trim() === '') {
+            alert("Please enter the group's name!");
+            return;
         }
-    }
+        createGroup(groupname);
+        setGroupCreationMessage(`Hello Group ${groupname}! Your group has been created.`);
+        setGroupname(''); // Clear the input field
+        closeGroupModal(); // Close the modal after submission
+    };
+    
+    // Function to open the modal for creating a group
+    const openGroupModal = () => {
+        setGroupVisible(true);
+    };
+    
+    // Function to close the modal for creating a group
+    const closeGroupModal = () => {
+        setGroupVisible(false);
+    };
 
     return (
         <>
             {currentUserImage && currentUserImage && (
                 <Container>
-                    <div className="brand">
-                        <img src={Logo} alt="logo" />
-                        <h3>J H N P</h3>
+                    <div className="tool-box">
+                        <IconContext.Provider
+                            value={{
+                                color: 'white',
+                                className: 'setting-gear',
+                                size: '1.5rem',
+                            }}
+                        >
+                            <div className="box" onClick={openGroupModal}>
+                                <BsPlus />
+                                <HiUserGroup />
+                            </div>
+                            {groupVisible && (
+                            <Modal>
+                            <ModalContent>
+                                {groupCreationMessage ? (
+                                    <p>{groupCreationMessage}</p>
+                                ) : (
+                                    <>
+                                        <p>Please enter the group's name:</p>
+                                        <input
+                                            type="text"
+                                            id="newGroupname"
+                                            value={groupname}
+                                            onChange={(e) => setGroupname(e.target.value)}
+                                        />
+                                        <button onClick={submitGroupname}>Create Group</button>
+                                        <button className="cancel-button" onClick={closeGroupModal}>Cancel</button>
+                                    </>
+                                )}
+                            </ModalContent>
+                        </Modal>
+                        )}
+                        </IconContext.Provider>
+                        <IconContext.Provider
+                            value={{
+                                color: 'white',
+                                className: 'setting-gear',
+                                size: '1.5rem',
+                            }}
+                        >
+                            <div className="nickname-change" onClick={openModal}>
+                                {/* <AiTwotoneSetting /> */}
+                                Change Nickname
+                            </div>
+                            {modalVisible && (
+                            <Modal>
+                                <ModalContent>
+                                    <p>Please enter your new nickname:</p>
+                                    <input type="text" id="newNickname" value={newNickname} onChange={(e) => setNewNickname(e.target.value)} />
+                                    <button onClick={submitNickname}>Submit</button>
+                                    <button className="cancel-button" onClick={closeModal}>Cancel</button>
+                                </ModalContent>
+                            </Modal>
+                        )}
+                        </IconContext.Provider>
+                    </div>
+                    <div className="current-user">
+                        <div className="username">
+                            <h2>{currentNickname}</h2>
+                        </div>
+                        <div className="avatar">
+                            <img src={`${currentUserImage}`} alt="avatar" />
+                        </div>
                     </div>
                     <div className="contacts">
                         {contacts.map((contact, index) => {
@@ -170,10 +245,31 @@ export default function Contacts({ contacts, changeChat, socket }) {
                                 size: '1.5rem',
                             }}
                         >
-                            <div className="box" onClick={createGroupPopup}>
+                            <div className="box" onClick={openGroupModal}>
                                 <BsPlus />
                                 <HiUserGroup />
                             </div>
+                            {groupVisible && (
+                            <Modal>
+                            <ModalContent>
+                                {groupCreationMessage ? (
+                                    <p>{groupCreationMessage}</p>
+                                ) : (
+                                    <>
+                                        <p>Please enter the group's name:</p>
+                                        <input
+                                            type="text"
+                                            id="newGroupname"
+                                            value={groupname}
+                                            onChange={(e) => setGroupname(e.target.value)}
+                                        />
+                                        <button onClick={submitGroupname}>Create Group</button>
+                                        <button className="cancel-button" onClick={closeGroupModal}>Cancel</button>
+                                    </>
+                                )}
+                            </ModalContent>
+                        </Modal>
+                        )}
                         </IconContext.Provider>
                         <IconContext.Provider
                             value={{
@@ -182,9 +278,19 @@ export default function Contacts({ contacts, changeChat, socket }) {
                                 size: '1.5rem',
                             }}
                         >
-                            <div className="box" onClick={changeNickNamePopup}>
+                            <div className="box" onClick={openModal}>
                                 <AiTwotoneSetting />
                             </div>
+                            {modalVisible && (
+                            <Modal>
+                                <ModalContent>
+                                    <p>Please enter your new nickname:</p>
+                                    <input type="text" id="newNickname" value={newNickname} onChange={(e) => setNewNickname(e.target.value)} />
+                                    <button onClick={submitNickname}>Submit</button>
+                                    <button className="cancel-button" onClick={closeModal}>Cancel</button>
+                                </ModalContent>
+                            </Modal>
+                        )}
                         </IconContext.Provider>
                     </div>
                 </Container>
@@ -194,10 +300,11 @@ export default function Contacts({ contacts, changeChat, socket }) {
 }
 const Container = styled.div`
     display: grid;
-    grid-template-rows: 10% 75% 15%;
+    grid-template-rows: 8% 12% 80%;
     overflow: hidden;
-    background-color: #080425;
+    background-color: #403129;
     .brand {
+      background-color: #221c16;
         display: flex;
         align-items: center;
         gap: 1rem;
@@ -216,6 +323,7 @@ const Container = styled.div`
         align-items: center;
         overflow: auto;
         gap: 0.8rem;
+        padding: 1rem 1rem;
         &::-webkit-scrollbar {
             width: 0.2rem;
             &-thumb {
@@ -225,16 +333,20 @@ const Container = styled.div`
             }
         }
         .contact {
-            background-color: #eeeeee37;
+            background-color: #9a7c6260;
             min-height: 5rem;
             cursor: pointer;
-            width: 90%;
+            width: 100%;
             border-radius: 0.2rem;
-            padding: 0.4rem;
+            padding: 0.5rem 1rem;
             display: flex;
             gap: 1rem;
             align-items: center;
-            transition: 0.5s ease-in-out;
+            transition: 0.2s ease-in-out;
+            &:hover {
+              background-color: #9a7c62;
+              cursor: pointer;
+            }
             .avatar {
                 img {
                     height: 3rem;
@@ -250,23 +362,51 @@ const Container = styled.div`
             }
         }
         .selected {
-            background-color: #9a86f9;
+            background-color: #9a7c62;
+        }
+    }
+    .tool-box {
+        background-color: #221c16;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1rem;
+        .box {
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 0.2rem;
+            transition: 0.2s;
+            &:hover {
+              background-color: #c1ad9d;
+            }
+        }
+        .nickname-change {
+            background-color: #fca300;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 0.2rem;
+            transition: 0.2s;
+            color: whitesmoke;
+            &:hover {
+              background-color: #e97603;
+            }
         }
     }
 
     .current-user {
-        background-color: #0d0d30;
+        background-color: #221c16;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        gap: 2rem;
+        gap: 1rem;
+        padding: 0 2rem;
         .avatar {
             img {
                 height: 3rem;
                 max-inline-size: 100%;
             }
         }
-
         .username {
             h2 {
                 color: white;
@@ -280,5 +420,86 @@ const Container = styled.div`
                 }
             }
         }
+        .box {
+          cursor: pointer;
+          padding: 0.3rem;
+          border-radius: 0.2rem;
+          transition: 0.2s;
+          &:hover {
+            background-color: #c1ad9d;
+          }
+        }
     }
+    /* Close button style */
+    .close {
+        color: #aaa;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+
+    input[type="text"] {
+        padding: 10px;
+        width: 80%;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+        margin: 0 10px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    .cancel-button {
+        background-color: #f44336;
+    }
+
+    .cancel-button:hover {
+        background-color: #d32f2f;
+    }
+`;
+
+
+const Modal = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+`;
+
+const ModalContent = styled.div`
+    background-color: #fca300;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    width: 350px;
 `;
