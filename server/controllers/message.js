@@ -65,6 +65,17 @@ module.exports.editMessage = async (req, res, next) => {
     }
 };
 
+module.exports.deleteMessage = async (req, res, next) => {
+    try {
+        const { messageId } = req.body;
+        const data = await Messages.findByIdAndDelete(messageId);
+        if (data) return res.json({ msg: 'Message deleted successfully.', data: data.id });
+        else return res.status(400).json({ msg: 'Failed to delete message' });
+    } catch (ex) {
+        next(ex);
+    }
+};
+
 module.exports.addChatGroup = async (req, res, next) => {
     try {
         const { chatName, users } = req.body;
