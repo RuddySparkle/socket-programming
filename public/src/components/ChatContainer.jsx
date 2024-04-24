@@ -41,26 +41,27 @@ export default function ChatContainer({ currentChat, socket }) {
     // Listen for incoming messages from the server
     useEffect(() => {
         // Define a listener for 'msg-received' event
+        const currentSocket = socket.current;
         const handleMessageReceived = (msg) => {
             setMessages((prevMessages) => [...prevMessages, { fromSelf: false, message: msg }]);
         };
         // Subscribe to the event
-        socket.current.on('msg-receive', handleMessageReceived);
+        currentSocket.on('msg-receive', handleMessageReceived);
         // Clean up listener when component unmounts
         return () => {
-            socket.current.off('msg-receive', handleMessageReceived);
+            currentSocket.off('msg-receive', handleMessageReceived);
         };
-    }, [socket]);
+    }, [socket.current]); // Include socket.current in the dependency array
 
-    useEffect(() => {
-        const handleMessageReceived = (msg) => {
-            setMessages((prevMessages) => [...prevMessages, { fromSelf: false, message: msg }]);
-        };
-        socket.current.on('msg-receive', handleMessageReceived);
-        return () => {
-            socket.current.off('msg-receive', handleMessageReceived);
-        };
-    }, [socket]);
+    // useEffect(() => {
+    //     const handleMessageReceived = (msg) => {
+    //         setMessages((prevMessages) => [...prevMessages, { fromSelf: false, message: msg }]);
+    //     };
+    //     socket.current.on('msg-receive', handleMessageReceived);
+    //     return () => {
+    //         socket.current.off('msg-receive', handleMessageReceived);
+    //     };
+    // }, [socket]);
 
     useEffect(() => {
         async function fetchData() {
