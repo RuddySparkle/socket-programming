@@ -26,7 +26,7 @@ const io = socket(server, {
     },
 });
 
-const Assistant = 'Tortoise Assistant';
+// const Assistant = 'Tortoise Assistant';
 
 global.onlineUsers = new Map();
 io.on('connection', (socket) => {
@@ -43,25 +43,25 @@ io.on('connection', (socket) => {
     });
 
     socket.on('receive-msg', (msg) => {
-        console.log(msg);
+        // console.log(msg);
         io.emit('receive-msg', msg);
     });
 
     socket.on('join-room', ({ username, room }) => {
         const user = userJoin(socket.id, username, room);
 
-        console.log(getRoomUsers());
+        // console.log(getRoomUsers());
         console.log(user);
 
         socket.join(user.room);
         console.log(`${user.username} has joined Room ${room} with ID ${socket.id}`);
         // Welcome current user
-        socket.emit('msg-receive', formatMessage(Assistant, 'Welcome to ChatCord!'));
+        // socket.emit('msg-receive', formatMessage(Assistant, 'Welcome to Chat!'));
 
         // Broadcast when a user connects
-        socket.broadcast
-            .to(user.room)
-            .emit('msg-receive', formatMessage(Assistant, `${user.username} has joined the chat`));
+        // socket.broadcast
+        //     .to(user.room)
+        //     .emit('msg-receive', formatMessage(Assistant, `${user.username} has joined the chat`));
 
         // Send users and room info
         io.to(user.room).emit('roomUsers', {
@@ -70,18 +70,27 @@ io.on('connection', (socket) => {
         });
     });
 
+    // edit message
+    socket.on('edit-message', ({ messageId, newMessage }) => {
+        console.log('edit-message', { messageId, newMessage });
+        // Broadcast the edited message to all users in the same room except the sender
+        io.emit('message-edited', { messageId, newMessage });
+    });
+
+    // delete message
+    socket.on('delete-message', ({ messageId }) => {
+        console.log('delete-message', { messageId });
+        // Broadcast the deleted message to all users in the same room
+        io.emit('message-deleted', { messageId });
+    });
+
     // Group Chat Messages
     socket.on('send-group-message', (msg) => {
         const user = getCurrentUser(socket.id);
-        console.log('Sender user info,', user);
-        console.log('Send Group Message, ', msg);
-        console.log('Send to room,', user.room);
-        console.log('User in the room,', getRoomUsers(user.room));
         const users = getRoomUsers(user.room);
         for (let i = 0; i < users.length; i++) {
             socket.to(users[i].id).emit('msg-recieve', formatMessage(user.username, msg));
         }
-        // io.to(user.room).emit('msg-receive', { msg: msg });
     });
 
     // Run when client disconnects Chat Messages
@@ -89,7 +98,7 @@ io.on('connection', (socket) => {
         const user = userLeave(socket.id);
 
         if (user) {
-            io.to(user.room).emit('msg-receive', formatMessage(Assistant, `${user.username} has left the chat`));
+            // io.to(user.room).emit('msg-receive', formatMessage(Assistant, `${user.username} has left the chat`));
             // Send users and room info
             io.to(user.room).emit('roomUsers', {
                 room: user.room,

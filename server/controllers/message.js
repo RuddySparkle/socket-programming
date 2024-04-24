@@ -11,7 +11,7 @@ module.exports.getMessages = async (req, res, next) => {
             $or: [{ users: { $all: [from, to] } }, { users: { $all: [to, from] } }],
         }).sort({ createdAt: 1 });
 
-        console.log(messages);
+        // console.log(messages);
 
         const projectedMessages = messages.map((msg) => {
             return {
@@ -110,7 +110,7 @@ module.exports.addChatGroup = async (req, res, next) => {
 module.exports.getMessagesChatGroups = async (req, res, next) => {
     try {
         const { chatName, user } = req.body;
-        console.log(chatName);
+        // console.log(chatName);
         const chatGroup = await ChatGroup.findOne({ name: chatName }).populate({
             path: 'messages',
             select: ['_id', 'message', 'sender', 'edited', 'isGroup'],
