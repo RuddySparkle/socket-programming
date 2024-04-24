@@ -72,7 +72,7 @@ export default function ChatContainer({ currentChat, socket }) {
                     from: data._id,
                     to: currentChat._id,
                 });
-                console.log(response);
+                // console.log(response);
 
                 setMessages(response.data);
             } else {
@@ -82,7 +82,7 @@ export default function ChatContainer({ currentChat, socket }) {
                     chatName: currentChat.username,
                     user: data._id,
                 });
-                console.log(response);
+                // console.log(response);
                 setMessages(response.data);
             }
         }
@@ -91,7 +91,7 @@ export default function ChatContainer({ currentChat, socket }) {
 
     const editMessageHandler = async (message) => {
         // add window alert to edit message
-        console.log(message);
+        // console.log(message);
         if (message.fromSelf) {
             const newMessage = prompt('Edit your message', message.message.text);
             if (newMessage === null) {
@@ -107,20 +107,47 @@ export default function ChatContainer({ currentChat, socket }) {
                     messageId: message._id,
                     message: newMessage,
                 });
-                console.log(response);
+                // console.log(response);
                 if (response.status === 200) {
                     const msgs = [...messages];
                     msgs[messages.indexOf(message)].message.text = newMessage;
                     // set classnames for css to edit message
                     msgs[messages.indexOf(message)].className += ' edited';
                     setMessages(msgs);
-                    console.log(msgs);
+                    // console.log(msgs);
+                    socket.current.emit('edit-message', {
+                        messageId: message._id,
+                        newMessage,
+                    });
                 } else {
                     alert('Failed to edit message');
                 }
             }
         }
     };
+
+    // Listen edit message event
+    useEffect(() => {
+        // Define a listener for 'message-edited' event
+        const handleMessageEdited = ({ messageId, newMessage }) => {
+            // Update the message in the UI based on messageId
+            setMessages((prevMessages) => {
+                return prevMessages.map((message) => {
+                    if (message._id === messageId) {
+                        return { ...message, message: newMessage };
+                    } else {
+                        return message;
+                    }
+                });
+            });
+        };
+        // Subscribe to the event
+        socket.current.on('message-edited', handleMessageEdited);
+        // Clean up listener when component unmounts
+        return () => {
+            socket.current.off('message-edited', handleMessageEdited);
+        };
+    }, [socket, setMessages]);
 
     const deleteMessageHandler = async (message) => {
         // add window alert to delete message
@@ -136,12 +163,30 @@ export default function ChatContainer({ currentChat, socket }) {
                 1,
             );
             setMessages(msgs);
-            console.log(msgs);
+            socket.current.emit('delete-message', { messageId: message._id });
+            // console.log(msgs);
         } else {
             alert('Failed to delete message');
         }
         return false;
     };
+
+    // Listen delete message event
+    useEffect(() => {
+        // Define a listener for 'message-deleted' event
+        const handleMessageDeleted = ({ messageId }) => {
+            // Remove the deleted message from the UI based on messageId
+            setMessages((prevMessages) => {
+                return prevMessages.filter((message) => message._id !== messageId);
+            });
+        };
+        // Subscribe to the event
+        socket.current.on('message-deleted', handleMessageDeleted);
+        // Clean up listener when component unmounts
+        return () => {
+            socket.current.off('message-deleted', handleMessageDeleted);
+        };
+    }, [socket, setMessages]);
 
     useEffect(() => {
         const getCurrentChat = async () => {
@@ -186,7 +231,7 @@ export default function ChatContainer({ currentChat, socket }) {
         const msgs = [...messages];
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
-        console.log(msgs);
+        // console.log(msgs);
         // socket.current.send(JSON.stringify(msg));
         // async function fetchData() {
         //     const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
@@ -211,6 +256,28 @@ export default function ChatContainer({ currentChat, socket }) {
         // }
         // fetchData();
     };
+
+    useEffect(() => {
+        // Define a listener for 'message-edited' event
+        const handleMessageEdited = ({ messageId, newMessage }) => {
+            // Update the message in the UI based on messageId
+            setMessages((prevMessages) => {
+                return prevMessages.map((message) => {
+                    if (message._id === messageId) {
+                        return { ...message, message: newMessage };
+                    } else {
+                        return message;
+                    }
+                });
+            });
+        };
+        // Subscribe to the event
+        socket.current.on('message-edited', handleMessageEdited);
+        // Clean up listener when component unmounts
+        return () => {
+            socket.current.off('message-edited', handleMessageEdited);
+        };
+    }, [socket, setMessages]);
 
     useEffect(() => {
         socket.current.on('msg-recieve', (msg) => {

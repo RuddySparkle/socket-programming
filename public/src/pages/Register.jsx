@@ -7,20 +7,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import { registerRoute } from '../utils/APIRoutes';
 
 export default function Register() {
-  const navigate = useNavigate();
-  const toastOptions = {
-    position: 'top-center',
-    autoClose: 5000,
-    pauseOnHover: true,
-    draggable: false,
-    theme: "light",
-  };
-  const [values, setValues] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+    const navigate = useNavigate();
+    const toastOptions = {
+        position: 'top-center',
+        autoClose: 5000,
+        pauseOnHover: true,
+        draggable: false,
+        theme: 'light',
+    };
+    const [values, setValues] = useState({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
 
     useEffect(() => {
         if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
@@ -51,13 +51,19 @@ export default function Register() {
         return true;
     };
 
-    const generateMultiAvatar = (query) =>
-        `https://api.multiavatar.com/${query}.png?apikey=${process.env.REACT_APP_MA_API_KEY}`;
+    const generateMultiAvatar = (query) => {
+        const selector = Math.floor(Math.random() * 2);
+        if (selector === 1) {
+            return `https://api.dicebear.com/8.x/adventurer-neutral/svg?seed=${query}&radius=30`;
+        } else {
+            return `https://api.dicebear.com/8.x/big-ears-neutral/svg?seed=${query}&radius=30`;
+        }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (handleValidation()) {
-            const avatarImage =  generateMultiAvatar(Math.random().toString(36).substring(2));
+            const avatarImage = generateMultiAvatar(Math.random().toString(36).substring(2));
             const { email, username, password } = values;
             const { data } = await axios.post(registerRoute, {
                 username,
@@ -70,7 +76,7 @@ export default function Register() {
                 toast.error(data.msg, toastOptions);
             }
             if (data.status === true) {
-                console.log(avatarImage)
+                console.log(avatarImage);
                 localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY, JSON.stringify(data.user));
                 navigate('/');
             }
